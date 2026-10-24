@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python3 -m pip install -r requirements.txt
+      - name: Compile support package
+        run: python3 -m compileall -q tools/migration_support
+      - name: Validate migrated skills
+        run: python3 tools/migration_support/validate_names.py --scan-dir .codex/skills
+
